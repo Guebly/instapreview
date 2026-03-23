@@ -19,7 +19,6 @@ export function loadTheme(): "dark" | "light" | null {
   } catch {}
   return null;
 }
-
 export function saveIgTheme(theme: "dark" | "light") {
   try { localStorage.setItem("instapreview-ig-theme", theme); } catch {}
 }
