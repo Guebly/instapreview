@@ -74,7 +74,7 @@ export default function Sidebar({
   async function handleMultiFeed(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []); if (!files.length) return;
     const urls  = await Promise.all(files.map(readFileAsDataURL));
-    const next  = [...feed, ...urls.map(url => ({ id: uid(), url, pinned: false }))];
+    const next  = [...feed, ...urls.map(url => ({ id: uid(), url, pinned: false, archived: false }))];
     onFeedChange(next);
     if (profile.autoCount) onProfileChange({ posts: String(next.length) });
     e.target.value = "";
@@ -85,7 +85,7 @@ export default function Sidebar({
     const slot = pendingSlot.current;
     const next = slot
       ? feed.map(fi => fi.id === slot ? { ...fi, url } : fi)
-      : [...feed, { id: uid(), url, pinned: false }];
+      : [...feed, { id: uid(), url, pinned: false, archived: false }];
     pendingSlot.current = null;
     onFeedChange(next);
     if (profile.autoCount && !slot) onProfileChange({ posts: String(next.length) });
