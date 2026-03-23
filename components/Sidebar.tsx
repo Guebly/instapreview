@@ -121,8 +121,8 @@ export default function Sidebar({
   const sortedFeed = [...feed.filter(f => f.pinned), ...feed.filter(f => !f.pinned)];
 
   return (
-    <aside className="w-72 flex-shrink-0 flex flex-col overflow-hidden
-      border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111111]">
+    <aside className="w-72 h-full flex-shrink-0 flex flex-col overflow-hidden
+      border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111111] shadow-2xl md:shadow-none">
 
       {/* Tabs */}
       <div className="flex border-b border-slate-200 dark:border-slate-800 flex-shrink-0">

@@ -8,18 +8,18 @@ export interface ProfileData {
   username:    string;
   displayName: string;
   bio:         string;
-  link:        string;       // legacy single link (still used as primary)
-  bioLinks:    BioLink[];    // new: up to 5 links
-  posts:       string;       // auto-synced with feed.length when autoCount=true
-  autoCount:   boolean;      // sync post count automatically
+  link:        string;
+  bioLinks:    BioLink[];
+  posts:       string;
+  autoCount:   boolean;
   followers:   string;
   following:   string;
   avatarUrl:   string | null;
-  verified:    "none" | "blue" | "gold";  // none / Meta blue / Meta gold
+  verified:    "none" | "blue" | "gold";
   category:    string;
   ctaLabel:    string;
   storyActive: boolean;
-  viewMode:    "owner" | "visitor";  // whose POV the preview shows
+  viewMode:    "owner" | "visitor";
 }
 
 export interface Highlight {
@@ -29,12 +29,21 @@ export interface Highlight {
 }
 
 export interface FeedImage {
-  id:     string;
-  url:    string;
-  pinned: boolean;
+  id:       string;
+  url:      string;
+  pinned:   boolean;
+  archived: boolean;   // hidden from preview, kept in storage
 }
 
-export type AppTheme  = "dark"  | "light";
-export type IgTheme   = "light" | "dark";
+export interface SavedProfile {
+  version:    number;
+  savedAt:    string;
+  profile:    ProfileData;
+  highlights: Highlight[];
+  feed:       FeedImage[];
+}
+
+export type AppTheme   = "dark"  | "light";
+export type IgTheme    = "light" | "dark";
 export type DeviceView = "mobile" | "desktop";
 export type SidebarTab = "profile" | "highlights" | "feed";
