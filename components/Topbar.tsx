@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { Moon, Sun, RotateCcw, Github, Download, Loader2, Save, FolderOpen, Menu } from "lucide-react";
 import IgIcon from "./IgIcon";
 import type { AppTheme } from "@/lib/types";
