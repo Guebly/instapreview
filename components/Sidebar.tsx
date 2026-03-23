@@ -67,7 +67,8 @@ export default function Sidebar({
   }
   async function handleHlCover(e: React.ChangeEvent<HTMLInputElement>, id: string) {
     const f = e.target.files?.[0]; if (!f) return;
-    onHighlightsChange(highlights.map(h => h.id === id ? { ...h, coverUrl: await readFileAsDataURL(f) } : h));
+    const url = await readFileAsDataURL(f);
+    onHighlightsChange(highlights.map(h => h.id === id ? { ...h, coverUrl: url } : h));
     e.target.value = "";
   }
   async function handleMultiFeed(e: React.ChangeEvent<HTMLInputElement>) {
