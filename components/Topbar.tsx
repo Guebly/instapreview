@@ -1,16 +1,21 @@
 "use client";
-import { Moon, Sun, RotateCcw, Github } from "lucide-react";
+import { Moon, Sun, RotateCcw, Github, Download, Loader2 } from "lucide-react";
 import IgIcon from "./IgIcon";
 
 interface TopbarProps {
   theme: "dark" | "light";
   onToggleTheme: () => void;
   onReset: () => void;
+  onExport: () => Promise<void>;
+  isExporting: boolean;
 }
 
-export default function Topbar({ theme, onToggleTheme, onReset }: TopbarProps) {
+export default function Topbar({
+  theme, onToggleTheme, onReset, onExport, isExporting,
+}: TopbarProps) {
   return (
-    <header className="h-14 flex items-center justify-between px-4 sm:px-6 border-b border-slate-800 dark:border-slate-800 border-slate-200 bg-white dark:bg-[#0e0e0e] flex-shrink-0 z-10">
+    <header className="h-14 flex items-center justify-between px-4 sm:px-6 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0e0e0e] flex-shrink-0 z-10">
+
       {/* Left: Logo */}
       <div className="flex items-center gap-3">
         <IgIcon size={22} />
@@ -44,6 +49,8 @@ export default function Topbar({ theme, onToggleTheme, onReset }: TopbarProps) {
 
       {/* Right: Actions */}
       <div className="flex items-center gap-2">
+
+        {/* GitHub */}
         <a
           href="https://github.com/guebly/instapreview"
           target="_blank"
@@ -55,6 +62,23 @@ export default function Topbar({ theme, onToggleTheme, onReset }: TopbarProps) {
           Open-source
         </a>
 
+        {/* Export PNG */}
+        <button
+          onClick={onExport}
+          disabled={isExporting}
+          title="Exportar como PNG"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isExporting
+            ? <Loader2 size={13} className="animate-spin" />
+            : <Download size={13} />
+          }
+          <span className="hidden sm:inline">
+            {isExporting ? "Gerando..." : "Exportar PNG"}
+          </span>
+        </button>
+
+        {/* Reset */}
         <button
           onClick={onReset}
           title="Resetar tudo"
@@ -64,6 +88,7 @@ export default function Topbar({ theme, onToggleTheme, onReset }: TopbarProps) {
           <span className="hidden sm:inline">Resetar</span>
         </button>
 
+        {/* Theme toggle */}
         <button
           onClick={onToggleTheme}
           title={theme === "dark" ? "Modo claro" : "Modo escuro"}

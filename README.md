@@ -45,6 +45,7 @@ O InstaPreview resolve isso sendo **100% client-side**, open-source e sem nenhum
 | ⭕ **Destaques** | Crie, nomeie e adicione capas aos stories em destaque |
 | 🖼️ **Feed drag & drop** | Arraste as fotos para reorganizar a grade 3×N do feed |
 | 📱 **Frame de celular** | Preview realista dentro de um frame de smartphone |
+| 📥 **Exportar PNG** | Baixa o frame + fundo com branding Guebly |
 | 🌙 **Dark / Light mode** | Alternância com persistência em `localStorage` |
 | 🔒 **100% privado** | Nenhuma imagem sai do seu navegador |
 | 📤 **Importação múltipla** | Importe várias fotos de uma vez para o feed |
@@ -57,6 +58,7 @@ O InstaPreview resolve isso sendo **100% client-side**, open-source e sem nenhum
 - **[TypeScript 5](https://typescriptlang.org/)** — tipos em todo o projeto
 - **[Tailwind CSS 3](https://tailwindcss.com/)** — utilitários + dark mode por classe
 - **[Lucide React](https://lucide.dev/)** — ícones consistentes
+- **[html2canvas 1.4](https://html2canvas.hertzen.com/)** — exportação de PNG client-side
 - **HTML5 Drag & Drop API** + **Touch Events** — sem dependências externas para o drag
 
 ---
