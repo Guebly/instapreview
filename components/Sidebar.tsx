@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { Plus, Trash2, Image as ImageIcon, Upload, Pin, PinOff, ExternalLink } from "lucide-react";
 import type { ProfileData, Highlight, FeedImage, SidebarTab, BioLink } from "@/lib/types";
 import { uid, readFileAsDataURL } from "@/lib/utils";
@@ -229,11 +229,13 @@ export default function Sidebar({
           <div>
             <Label>Verificação</Label>
             <div className="grid grid-cols-3 gap-2">
-              {([
-                { val: "none", label: "Nenhum" },
-                { val: "blue", label: "Azul",  badge: <VerifiedBadge type="blue" size={14} /> },
-                { val: "gold", label: "Ouro",  badge: <VerifiedBadge type="gold" size={14} /> },
-              ] as const).map(({ val, label, badge }) => (
+              {(
+                [
+                  { val: "none" as const, label: "Nenhum", badge: null },
+                  { val: "blue" as const, label: "Azul",   badge: <VerifiedBadge type="blue" size={14} /> },
+                  { val: "gold" as const, label: "Ouro",   badge: <VerifiedBadge type="gold" size={14} /> },
+                ] satisfies { val: ProfileData["verified"]; label: string; badge: React.ReactNode }[]
+              ).map(({ val, label, badge }) => (
                 <button key={val}
                   onClick={() => onProfileChange({ verified: val })}
                   className={`flex flex-col items-center gap-1.5 py-2.5 px-2 rounded-xl text-[11px] font-semibold border-2 transition-all ${
@@ -241,7 +243,7 @@ export default function Sidebar({
                       ? "border-ig-red bg-ig-red/5 text-ig-red"
                       : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600"
                   }`}>
-                  <span className="text-base">{badge ?? "✕"}</span>
+                  <span className="text-base leading-none mb-0.5">{badge ?? "✕"}</span>
                   {label}
                 </button>
               ))}
