@@ -7,6 +7,7 @@ import PhonePreview      from "@/components/PhonePreview";
 import DesktopPreview    from "@/components/DesktopPreview";
 import PresentationMode  from "@/components/PresentationMode";
 import ToastContainer    from "@/components/Toast";
+import ConfirmDialog     from "@/components/ConfirmDialog";
 import type { ToastMessage } from "@/components/Toast";
 import { exportPreview }  from "@/lib/exportPreview";
 import { exportPDFProposal } from "@/lib/pdfExport";
@@ -55,6 +56,11 @@ export default function Home() {
   const [hasSaved,        setHasSaved]        = useState(false);
   const [feedAnalysis,    setFeedAnalysis]    = useState<any>(null);
   const [presentationMode, setPresentationMode] = useState(false);
+
+  // Confirm dialogs
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [confirmLoad, setConfirmLoad] = useState(false);
+  const [confirmTemplate, setConfirmTemplate] = useState<{ open: boolean; template: Template | null }>({ open: false, template: null });
 
   const previewRef = useRef<HTMLDivElement>(null);
   const { toasts, add: addToast, remove: removeToast } = useToast();
@@ -131,7 +137,10 @@ export default function Home() {
 
   /* ── Reset ── */
   const handleReset = useCallback(() => {
-    if (!confirm("Resetar tudo? As fotos serão perdidas.")) return;
+    setConfirmReset(true);
+  }, []);
+
+  const doReset = useCallback(() => {
     setProfile(DEFAULT_PROFILE); setHighlights(mkHL()); setFeed([]);
     addToast("info", "Tudo resetado.");
   }, [addToast]);
@@ -150,7 +159,12 @@ export default function Home() {
   const handleLoadSession = useCallback(() => {
     const session = loadSession();
     if (!session) { addToast("error", "Nenhuma sessão encontrada."); return; }
-    if (!confirm("Carregar sessão salva? O estado atual será substituído.")) return;
+    setConfirmLoad(true);
+  }, [addToast]);
+
+  const doLoadSession = useCallback(() => {
+    const session = loadSession();
+    if (!session) return;
     setProfile({ ...DEFAULT_PROFILE, ...session.profile });
     setHighlights(session.highlights);
     setFeed(session.feed);
@@ -162,10 +176,14 @@ export default function Home() {
 
   /* ── Load template ── */
   const handleLoadTemplate = useCallback((template: Template) => {
-    if (!confirm(`Carregar template "${template.name}"? O perfil atual será substituído.`)) return;
-    setProfile({ ...DEFAULT_PROFILE, ...template.profile });
-    setHighlights(template.highlights);
-    setFeed(template.feed);
+    setConfirmTemplate({ open: true, template });
+  }, []);
+
+  const doLoadTemplate = useCallback(() => {
+    if (!confirmTemplate.template) return;
+    setProfile({ ...DEFAULT_PROFILE, ...confirmTemplate.template.profile });
+    setHighlights(confirmTemplate.template.highlights);
+    setFeed(confirmTemplate.template.feed);
     setActiveTab("profile");
     addToast("success", `Template "${template.name}" carregado!`, "Personalize agora com suas próprias informações.");
   }, [addToast]);
@@ -382,6 +400,39 @@ export default function Home() {
         feed={feed}
         onFeedReorder={updateFeed}
         igTheme={igTheme}
+      />
+
+      <ConfirmDialog
+        isOpen={confirmReset}
+        title="Resetar tudo?"
+        message="Todas as fotos e configurações serão perdidas. Esta ação não pode ser desfeita."
+        confirmLabel="Resetar"
+        cancelLabel="Cancelar"
+        variant="danger"
+        onConfirm={doReset}
+        onCancel={() => setConfirmReset(false)}
+      />
+
+      <ConfirmDialog
+        isOpen={confirmLoad}
+        title="Carregar sessão salva?"
+        message="O estado atual do perfil será substituído pela sessão salva anteriormente."
+        confirmLabel="Carregar"
+        cancelLabel="Cancelar"
+        variant="warning"
+        onConfirm={doLoadSession}
+        onCancel={() => setConfirmLoad(false)}
+      />
+
+      <ConfirmDialog
+        isOpen={confirmTemplate.open}
+        title={`Carregar template "${confirmTemplate.template?.name}"?`}
+        message="O perfil atual será substituído pelo template selecionado."
+        confirmLabel="Carregar"
+        cancelLabel="Cancelar"
+        variant="info"
+        onConfirm={doLoadTemplate}
+        onCancel={() => setConfirmTemplate({ open: false, template: null })}
       />
     </div>
   );
