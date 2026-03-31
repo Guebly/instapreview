@@ -7,6 +7,7 @@ import { uid, readFileAsDataURL } from "@/lib/utils";
 import VerifiedBadge from "./VerifiedBadge";
 import FeedAnalysis from "./FeedAnalysis";
 import TemplateGallery from "./TemplateGallery";
+import SampleImagesButton from "./SampleImagesButton";
 
 /* ── Shared styles ── */
 const inp =
@@ -510,7 +511,8 @@ export default function Sidebar({
               className="space-y-4"
             >
               <TemplateGallery onLoadTemplate={onLoadTemplate} />
-              <FeedAnalysis feed={feed} />
+              <SampleImagesButton onLoadImages={onFeedChange} />
+              <FeedAnalysis feed={feed} profile={profile} onFeedReorder={onFeedChange} />
             </motion.div>
           </AnimatePresence>
         )}

@@ -2,15 +2,22 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, TrendingUp, Palette, Lightbulb } from "lucide-react";
-import type { FeedImage, FeedAnalysis as FeedAnalysisType } from "@/lib/types";
+import type { FeedImage, FeedAnalysis as FeedAnalysisType, ProfileData } from "@/lib/types";
 import { analyzeFeed } from "@/lib/feedAnalyzer";
 import BeforeAfterComparison from "./BeforeAfterComparison";
+import EngagementMetrics from "./EngagementMetrics";
+import CompetitorComparison from "./CompetitorComparison";
+import GridPatternSelector from "./GridPatternSelector";
+import QuickStats from "./QuickStats";
+import ColorMoodBoard from "./ColorMoodBoard";
 
 interface Props {
   feed: FeedImage[];
+  profile: ProfileData;
+  onFeedReorder: (f: FeedImage[]) => void;
 }
 
-export default function FeedAnalysis({ feed }: Props) {
+export default function FeedAnalysis({ feed, profile, onFeedReorder }: Props) {
   const [analysis, setAnalysis] = useState<FeedAnalysisType | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -200,6 +207,24 @@ export default function FeedAnalysis({ feed }: Props) {
           ))}
         </div>
       </div>
+
+      {/* Competitor Comparison */}
+      <CompetitorComparison currentScore={beforeScore} optimizedScore={harmony} />
+
+      {/* Engagement Metrics */}
+      <EngagementMetrics
+        followers={parseInt(profile.followers.replace(/\D/g, "")) || 1000}
+        harmonyScore={harmony}
+      />
+
+      {/* Quick Stats */}
+      <QuickStats harmonyScore={harmony} feedCount={feed.length} />
+
+      {/* Color Mood Board */}
+      <ColorMoodBoard dominantColors={dominantColors} palette={palette} />
+
+      {/* Grid Pattern Selector */}
+      <GridPatternSelector feed={feed} onApplyPattern={onFeedReorder} />
     </motion.div>
   );
 }
