@@ -20,12 +20,6 @@ export async function exportPDFProposal(options: PDFProposalOptions): Promise<vo
   doc.setFillColor(220, 39, 67);
   doc.rect(0, 0, 210, 297, "F");
 
-  // Overlay escuro
-  doc.setFillColor(0, 0, 0);
-  doc.setGState(new doc.GState({ opacity: 0.3 }));
-  doc.rect(0, 0, 210, 297, "F");
-  doc.setGState(new doc.GState({ opacity: 1.0 }));
-
   // Logo Guebly (simulado com texto)
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(24);
