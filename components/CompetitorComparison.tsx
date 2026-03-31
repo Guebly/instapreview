@@ -108,24 +108,11 @@ export default function CompetitorComparison({ currentScore, optimizedScore }: P
 
       <div className="mt-4 p-3 rounded-lg bg-white dark:bg-slate-950 border border-violet-200 dark:border-violet-800">
         <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-          💡 <span className="font-semibold">Com a otimização da Guebly</span>, seu perfil passa de{" "}
+          💡 <span className="font-semibold">Com otimização estratégica</span>, seu perfil pode passar de{" "}
           <span className="font-bold text-amber-600 dark:text-amber-400">#{competitors.findIndex(c => c.status === "current") + 1}</span> para{" "}
           <span className="font-bold text-emerald-600 dark:text-emerald-400">#1</span>, superando todos os concorrentes.
         </p>
       </div>
-
-      {optimizedScore >= 80 && (
-        <a
-          href="https://guebly.com.br/consultoria?ref=instapreview-competitor"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 flex items-center justify-center gap-2 w-full py-3 px-4
-            bg-gradient-to-r from-violet-500 to-purple-500 text-white rounded-xl
-            font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-lg"
-        >
-          🚀 Quero dominar meu nicho com a Guebly
-        </a>
-      )}
     </div>
   );
 }

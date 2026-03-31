@@ -10,7 +10,6 @@ import CompetitorComparison from "./CompetitorComparison";
 import GridPatternSelector from "./GridPatternSelector";
 import QuickStats from "./QuickStats";
 import ColorMoodBoard from "./ColorMoodBoard";
-import CTACard from "./CTACard";
 import SocialProof from "./SocialProof";
 
 interface Props {
@@ -228,15 +227,7 @@ export default function FeedAnalysis({ feed, profile, onFeedReorder }: Props) {
       {/* Grid Pattern Selector */}
       <GridPatternSelector feed={feed} onApplyPattern={onFeedReorder} />
 
-      {/* Strategic CTA based on score */}
-      {harmony >= 75 && (
-        <CTACard type="high-score" />
-      )}
-      {harmony < 50 && feed.length >= 6 && (
-        <CTACard type="low-score" />
-      )}
-
-      {/* Social Proof */}
+      {/* Open Source Badge */}
       <SocialProof />
     </motion.div>
   );
