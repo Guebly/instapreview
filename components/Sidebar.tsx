@@ -623,8 +623,12 @@ export default function Sidebar({
       <div className="flex-shrink-0 border-t border-slate-200 dark:border-slate-800 px-3 py-3 bg-white dark:bg-slate-950">
         <a href="https://www.guebly.com.br" target="_blank" rel="noopener noreferrer"
           className="flex items-center gap-2.5 group p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-ig-red to-pink-500 flex items-center justify-center flex-shrink-0 shadow group-hover:shadow-md group-hover:scale-105 transition-all">
-            <span className="text-white font-black text-sm">G</span>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-white dark:bg-slate-900 group-hover:scale-105 transition-all">
+            <img
+              src="https://www.guebly.com.br/guebly.png"
+              alt="Guebly"
+              className="w-full h-full object-contain"
+            />
           </div>
           <div className="flex-1">
             <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight group-hover:text-ig-red transition">
