@@ -112,7 +112,9 @@ export default function Home() {
         profile,
         analysis: feedAnalysis,
       });
-      addToast("success", "PDF exportado!", "Proposta comercial gerada com sucesso.");
+      addToast("success", "PDF exportado!", "Apresente para seu cliente. A Guebly pode ajudar na execução!");
+      // Track export event for analytics
+      // trackEvent('pdf_export', { username: profile.username });
     } catch {
       addToast("error", "Falha ao exportar PDF", "Tente novamente.");
     } finally { setExportingPDF(false); }

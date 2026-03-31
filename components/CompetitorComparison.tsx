@@ -113,6 +113,19 @@ export default function CompetitorComparison({ currentScore, optimizedScore }: P
           <span className="font-bold text-emerald-600 dark:text-emerald-400">#1</span>, superando todos os concorrentes.
         </p>
       </div>
+
+      {optimizedScore >= 80 && (
+        <a
+          href="https://guebly.com.br/consultoria?ref=instapreview-competitor"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 flex items-center justify-center gap-2 w-full py-3 px-4
+            bg-gradient-to-r from-violet-500 to-purple-500 text-white rounded-xl
+            font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-lg"
+        >
+          🚀 Quero dominar meu nicho com a Guebly
+        </a>
+      )}
     </div>
   );
 }

@@ -170,7 +170,12 @@ export async function exportPDFProposal(options: PDFProposalOptions): Promise<vo
 
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
-  doc.text("contato@guebly.com.br", 105, 262, { align: "center" });
+  doc.text("guebly.com.br/consultoria", 105, 262, { align: "center" });
+
+  // Footer with results promise
+  doc.setTextColor(100, 100, 100);
+  doc.setFontSize(10);
+  doc.text("✅ Aumento médio de 127% em engajamento · 📊 +200 marcas atendidas · 🚀 Resultados em 60 dias", 105, 280, { align: "center" });
 
   // ═══════════════════════════════════════════════════════════════
   // DOWNLOAD
