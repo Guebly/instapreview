@@ -23,6 +23,58 @@ html { scroll-behavior: smooth; }
   background-clip: text;
 }
 
+/* ── Premium gradients ── */
+.gradient-purple-pink {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.gradient-blue-cyan {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+.gradient-emerald-teal {
+  background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+}
+
+/* ── Glassmorphism ── */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.glass-dark {
+  background: rgba(17, 17, 17, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Shimmer effect ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background-size: 200% 100%;
+}
+
+/* ── Glow effects ── */
+.glow-purple {
+  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glow-purple:hover {
+  box-shadow: 0 20px 60px rgba(102, 126, 234, 0.5);
+  transform: translateY(-2px);
+}
+
+.glow-ig {
+  box-shadow: 0 10px 40px rgba(220, 39, 67, 0.3);
+}
+.glow-ig:hover {
+  box-shadow: 0 20px 60px rgba(220, 39, 67, 0.4);
+  transform: translateY(-2px);
+}
+
 /* ── Phone frame shadow ── */
 .phone-shadow {
   box-shadow:

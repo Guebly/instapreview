@@ -46,4 +46,22 @@ export interface SavedProfile {
 export type AppTheme   = "dark"  | "light";
 export type IgTheme    = "light" | "dark";
 export type DeviceView = "mobile" | "desktop";
-export type SidebarTab = "profile" | "highlights" | "feed";
+export type SidebarTab = "profile" | "highlights" | "feed" | "analysis";
+
+export interface FeedAnalysis {
+  harmony: number;           // 0-100 score
+  dominantColors: string[];
+  palette: "warm" | "cool" | "neutral" | "vibrant";
+  aesthetic: "minimal" | "colorful" | "professional" | "lifestyle";
+  recommendations: string[];
+}
+
+export interface Template {
+  id: string;
+  name: string;
+  niche: string;
+  thumbnail?: string;
+  profile: ProfileData;
+  highlights: Highlight[];
+  feed: FeedImage[];
+}

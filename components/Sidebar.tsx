@@ -1,9 +1,12 @@
 "use client";
 import React, { useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Trash2, Image as ImageIcon, Upload, Pin, PinOff, ExternalLink, X } from "lucide-react";
-import type { ProfileData, Highlight, FeedImage, SidebarTab, BioLink } from "@/lib/types";
+import type { ProfileData, Highlight, FeedImage, SidebarTab, BioLink, Template } from "@/lib/types";
 import { uid, readFileAsDataURL } from "@/lib/utils";
 import VerifiedBadge from "./VerifiedBadge";
+import FeedAnalysis from "./FeedAnalysis";
+import TemplateGallery from "./TemplateGallery";
 
 /* ── Shared styles ── */
 const inp =
@@ -52,6 +55,7 @@ const TABS: { id: SidebarTab; emoji: string; label: string }[] = [
   { id: "profile",    emoji: "👤", label: "Perfil"    },
   { id: "highlights", emoji: "⭕", label: "Destaques" },
   { id: "feed",       emoji: "⊞",  label: "Feed"      },
+  { id: "analysis",   emoji: "✨", label: "Análise"   },
 ];
 
 /* ── Verified options — typed explicitly to avoid TS inference issues ── */
@@ -85,6 +89,7 @@ interface SidebarProps {
   feed:               FeedImage[];
   onFeedChange:       (f: FeedImage[]) => void;
   onClose:            () => void;   // mobile X button
+  onLoadTemplate:     (t: Template) => void;
 }
 
 export default function Sidebar({
@@ -93,6 +98,7 @@ export default function Sidebar({
   highlights, onHighlightsChange,
   feed, onFeedChange,
   onClose,
+  onLoadTemplate,
 }: SidebarProps) {
   const avatarRef     = useRef<HTMLInputElement>(null);
   const hlCoverRefs   = useRef<Record<string, HTMLInputElement | null>>({});
@@ -491,6 +497,23 @@ export default function Sidebar({
           <input ref={feedMultiRef}  type="file" accept="image/*" multiple className="hidden" onChange={handleMultiFeed} />
           <input ref={feedSingleRef} type="file" accept="image/*"          className="hidden" onChange={handleSingleFeed} />
         </>)}
+
+        {/* ════ ANÁLISE ════ */}
+        {activeTab === "analysis" && (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key="analysis"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-4"
+            >
+              <TemplateGallery onLoadTemplate={onLoadTemplate} />
+              <FeedAnalysis feed={feed} />
+            </motion.div>
+          </AnimatePresence>
+        )}
 
       </div>
 

@@ -1,19 +1,22 @@
 "use client";
 import React from "react";
-import { Moon, Sun, RotateCcw, Github, Download, Loader2, Save, FolderOpen, Menu } from "lucide-react";
+import { Moon, Sun, RotateCcw, Github, Download, Loader2, Save, FolderOpen, Menu, FileText, Presentation } from "lucide-react";
 import IgIcon from "./IgIcon";
 import type { AppTheme } from "@/lib/types";
 
 interface TopbarProps {
-  appTheme:       AppTheme;
-  onToggleApp:    () => void;
-  onReset:        () => void;
-  onExport:       () => Promise<void>;
-  isExporting:    boolean;
-  onSaveSession:  () => void;
-  onLoadSession:  () => void;
-  hasSaved:       boolean;
-  onToggleSidebar: () => void;
+  appTheme:            AppTheme;
+  onToggleApp:         () => void;
+  onReset:             () => void;
+  onExport:            () => Promise<void>;
+  onExportPDF:         () => Promise<void>;
+  isExporting:         boolean;
+  isExportingPDF:      boolean;
+  onSaveSession:       () => void;
+  onLoadSession:       () => void;
+  hasSaved:            boolean;
+  onToggleSidebar:     () => void;
+  onPresentationMode:  () => void;
 }
 
 const Btn = ({ onClick, title, disabled, children, className = "" }: {
@@ -31,8 +34,8 @@ const Btn = ({ onClick, title, disabled, children, className = "" }: {
 );
 
 export default function Topbar({
-  appTheme, onToggleApp, onReset, onExport, isExporting,
-  onSaveSession, onLoadSession, hasSaved, onToggleSidebar,
+  appTheme, onToggleApp, onReset, onExport, onExportPDF, isExporting, isExportingPDF,
+  onSaveSession, onLoadSession, hasSaved, onToggleSidebar, onPresentationMode,
 }: TopbarProps) {
   return (
     <header className="h-14 flex items-center justify-between px-3 sm:px-5
@@ -120,10 +123,31 @@ export default function Topbar({
           <span>Open-source</span>
         </a>
 
-        {/* Export */}
+        {/* Export PNG */}
         <Btn onClick={onExport} disabled={isExporting} title="Exportar como PNG">
           {isExporting ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
           <span className="hidden sm:inline">{isExporting ? "…" : "PNG"}</span>
+        </Btn>
+
+        {/* Export PDF */}
+        <Btn
+          onClick={onExportPDF}
+          disabled={isExportingPDF}
+          title="Exportar proposta em PDF"
+          className="hidden md:flex border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+        >
+          {isExportingPDF ? <Loader2 size={13} className="animate-spin" /> : <FileText size={13} />}
+          <span className="hidden lg:inline">{isExportingPDF ? "…" : "PDF"}</span>
+        </Btn>
+
+        {/* Presentation Mode */}
+        <Btn
+          onClick={onPresentationMode}
+          title="Modo apresentação (F11)"
+          className="hidden lg:flex border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30"
+        >
+          <Presentation size={13} />
+          <span className="hidden xl:inline">Apresentar</span>
         </Btn>
 
         {/* Reset */}

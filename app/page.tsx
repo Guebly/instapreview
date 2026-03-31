@@ -1,14 +1,18 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
-import Topbar         from "@/components/Topbar";
-import Sidebar        from "@/components/Sidebar";
-import PhonePreview   from "@/components/PhonePreview";
-import DesktopPreview from "@/components/DesktopPreview";
-import ToastContainer from "@/components/Toast";
+import { motion, AnimatePresence } from "framer-motion";
+import Topbar            from "@/components/Topbar";
+import Sidebar           from "@/components/Sidebar";
+import PhonePreview      from "@/components/PhonePreview";
+import DesktopPreview    from "@/components/DesktopPreview";
+import PresentationMode  from "@/components/PresentationMode";
+import ToastContainer    from "@/components/Toast";
 import type { ToastMessage } from "@/components/Toast";
 import { exportPreview }  from "@/lib/exportPreview";
+import { exportPDFProposal } from "@/lib/pdfExport";
+import { analyzeFeed } from "@/lib/feedAnalyzer";
 import { saveSession, loadSession, hasSavedSession, formatBytes } from "@/lib/session";
-import type { ProfileData, Highlight, FeedImage, AppTheme, IgTheme, DeviceView, SidebarTab } from "@/lib/types";
+import type { ProfileData, Highlight, FeedImage, AppTheme, IgTheme, DeviceView, SidebarTab, Template } from "@/lib/types";
 import { uid, saveTheme, loadTheme, saveIgTheme, loadIgTheme } from "@/lib/utils";
 
 /* ── Defaults ── */
@@ -41,13 +45,16 @@ export default function Home() {
   const [appTheme,    setAppTheme]    = useState<AppTheme>("dark");
   const [igTheme,     setIgTheme]     = useState<IgTheme>("light");
   const [deviceView,  setDeviceView]  = useState<DeviceView>("mobile");
-  const [activeTab,   setActiveTab]   = useState<SidebarTab>("profile");
-  const [profile,     setProfile]     = useState<ProfileData>(DEFAULT_PROFILE);
-  const [highlights,  setHighlights]  = useState<Highlight[]>(mkHL());
-  const [feed,        setFeed]        = useState<FeedImage[]>([]);
-  const [exporting,   setExporting]   = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [hasSaved,    setHasSaved]    = useState(false);
+  const [activeTab,       setActiveTab]       = useState<SidebarTab>("profile");
+  const [profile,         setProfile]         = useState<ProfileData>(DEFAULT_PROFILE);
+  const [highlights,      setHighlights]      = useState<Highlight[]>(mkHL());
+  const [feed,            setFeed]            = useState<FeedImage[]>([]);
+  const [exporting,       setExporting]       = useState(false);
+  const [exportingPDF,    setExportingPDF]    = useState(false);
+  const [sidebarOpen,     setSidebarOpen]     = useState(false);
+  const [hasSaved,        setHasSaved]        = useState(false);
+  const [feedAnalysis,    setFeedAnalysis]    = useState<any>(null);
+  const [presentationMode, setPresentationMode] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
   const { toasts, add: addToast, remove: removeToast } = useToast();
@@ -96,6 +103,30 @@ export default function Home() {
     } finally { setExporting(false); }
   }, [exporting, profile.username, addToast]);
 
+  /* ── Export PDF ── */
+  const handleExportPDF = useCallback(async () => {
+    if (exportingPDF) return;
+    setExportingPDF(true);
+    try {
+      await exportPDFProposal({
+        profile,
+        analysis: feedAnalysis,
+      });
+      addToast("success", "PDF exportado!", "Proposta comercial gerada com sucesso.");
+    } catch {
+      addToast("error", "Falha ao exportar PDF", "Tente novamente.");
+    } finally { setExportingPDF(false); }
+  }, [exportingPDF, profile, feedAnalysis, addToast]);
+
+  /* ── Update feed analysis ── */
+  useEffect(() => {
+    if (feed.length === 0) {
+      setFeedAnalysis(null);
+      return;
+    }
+    analyzeFeed(feed).then(setFeedAnalysis);
+  }, [feed]);
+
   /* ── Reset ── */
   const handleReset = useCallback(() => {
     if (!confirm("Resetar tudo? As fotos serão perdidas.")) return;
@@ -127,6 +158,51 @@ export default function Home() {
     );
   }, [addToast]);
 
+  /* ── Load template ── */
+  const handleLoadTemplate = useCallback((template: Template) => {
+    if (!confirm(`Carregar template "${template.name}"? O perfil atual será substituído.`)) return;
+    setProfile({ ...DEFAULT_PROFILE, ...template.profile });
+    setHighlights(template.highlights);
+    setFeed(template.feed);
+    setActiveTab("profile");
+    addToast("success", `Template "${template.name}" carregado!`, "Personalize agora com suas próprias informações.");
+  }, [addToast]);
+
+  /* ── Keyboard shortcuts ── */
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // F11 for presentation mode
+      if (e.key === "F11") {
+        e.preventDefault();
+        setPresentationMode(p => !p);
+        return;
+      }
+
+      if (e.metaKey || e.ctrlKey) {
+        switch (e.key.toLowerCase()) {
+          case 's':
+            e.preventDefault();
+            handleSaveSession();
+            break;
+          case 'e':
+            e.preventDefault();
+            if (!exporting) handleExport();
+            break;
+          case 'r':
+            e.preventDefault();
+            handleReset();
+            break;
+          case 'p':
+            e.preventDefault();
+            setPresentationMode(true);
+            break;
+        }
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [handleSaveSession, handleExport, handleReset, exporting]);
+
   /* ════════════════════════════════════════════════════════════════ */
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-[#0a0a0a]">
@@ -135,11 +211,14 @@ export default function Home() {
         onToggleApp={() => setAppTheme(t => t === "dark" ? "light" : "dark")}
         onReset={handleReset}
         onExport={handleExport}
+        onExportPDF={handleExportPDF}
         isExporting={exporting}
+        isExportingPDF={exportingPDF}
         onSaveSession={handleSaveSession}
         onLoadSession={handleLoadSession}
         hasSaved={hasSaved}
         onToggleSidebar={() => setSidebarOpen(o => !o)}
+        onPresentationMode={() => setPresentationMode(true)}
       />
 
       <div className="flex flex-1 overflow-hidden relative">
@@ -173,6 +252,7 @@ export default function Home() {
             highlights={highlights} onHighlightsChange={setHighlights}
             feed={feed}             onFeedChange={updateFeed}
             onClose={() => setSidebarOpen(false)}
+            onLoadTemplate={handleLoadTemplate}
           />
         </div>
 
@@ -261,15 +341,22 @@ export default function Home() {
           </div>
 
           {/* ── Preview ── */}
-          <div
-            ref={previewRef}
-            className={`relative z-10 ${deviceView === "mobile" ? "preview-phone" : "preview-desktop"}`}
-          >
-            {deviceView === "mobile"
-              ? <PhonePreview   profile={profile} highlights={highlights} feed={feed} onFeedReorder={updateFeed} igTheme={igTheme} />
-              : <DesktopPreview profile={profile} highlights={highlights} feed={feed} onFeedReorder={updateFeed} igTheme={igTheme} />
-            }
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={deviceView}
+              ref={previewRef}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className={`relative z-10 ${deviceView === "mobile" ? "preview-phone" : "preview-desktop"}`}
+            >
+              {deviceView === "mobile"
+                ? <PhonePreview   profile={profile} highlights={highlights} feed={feed} onFeedReorder={updateFeed} igTheme={igTheme} />
+                : <DesktopPreview profile={profile} highlights={highlights} feed={feed} onFeedReorder={updateFeed} igTheme={igTheme} />
+              }
+            </motion.div>
+          </AnimatePresence>
 
           {/* ── Footer ── */}
           <a href="https://www.guebly.com.br" target="_blank" rel="noopener noreferrer"
@@ -284,6 +371,16 @@ export default function Home() {
       </div>
 
       <ToastContainer toasts={toasts} onRemove={removeToast} />
+
+      <PresentationMode
+        isOpen={presentationMode}
+        onClose={() => setPresentationMode(false)}
+        profile={profile}
+        highlights={highlights}
+        feed={feed}
+        onFeedReorder={updateFeed}
+        igTheme={igTheme}
+      />
     </div>
   );
 }
