@@ -243,7 +243,7 @@ export default function Home() {
           // Desktop: static in flow
           "lg:relative lg:translate-x-0 lg:flex",
           // Mobile: fixed overlay drawer
-          "fixed top-14 bottom-0 left-0",
+          "fixed top-0 bottom-0 left-0",
           // Slide animation
           "transition-transform duration-200 ease-in-out",
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",

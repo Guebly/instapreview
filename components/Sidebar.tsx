@@ -620,20 +620,18 @@ export default function Sidebar({
       </div>
 
       {/* ── Guebly footer ── */}
-      <div className="flex-shrink-0 border-t border-slate-200 dark:border-slate-800 px-4 py-4 bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-black">
+      <div className="flex-shrink-0 border-t border-slate-200 dark:border-slate-800 px-3 py-3 bg-white dark:bg-slate-950">
         <a href="https://www.guebly.com.br" target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-3 group p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-all">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-ig-red to-pink-500 flex items-center justify-center flex-shrink-0 shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all">
-            <img src="https://www.guebly.com.br/guebly.png" alt="Guebly"
-              className="w-6 h-6 rounded object-contain opacity-90"
-              onError={(e: any) => (e.target.style.display = "none")} />
+          className="flex items-center gap-2.5 group p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-ig-red to-pink-500 flex items-center justify-center flex-shrink-0 shadow group-hover:shadow-md group-hover:scale-105 transition-all">
+            <span className="text-white font-black text-sm">G</span>
           </div>
-          <div>
-            <p className="text-xs font-black text-slate-900 dark:text-white leading-none group-hover:text-ig-red transition">
+          <div className="flex-1">
+            <p className="text-xs font-bold text-slate-900 dark:text-white leading-tight group-hover:text-ig-red transition">
               InstaPreview
             </p>
-            <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-1 leading-none">
-              by guebly.com.br · open-source
+            <p className="text-[10px] text-slate-500 dark:text-slate-500 leading-tight">
+              by guebly.com.br
             </p>
           </div>
         </a>
