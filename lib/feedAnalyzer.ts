@@ -2,6 +2,7 @@ import type { FeedImage, FeedAnalysis } from "./types";
 
 /**
  * Analyze feed images and generate insights
+ * Uses client-side analysis without external dependencies
  */
 export async function analyzeFeed(feed: FeedImage[]): Promise<FeedAnalysis> {
   if (feed.length === 0) {
@@ -14,18 +15,14 @@ export async function analyzeFeed(feed: FeedImage[]): Promise<FeedAnalysis> {
     };
   }
 
-  // Extract colors from all images
+  // Extract colors from images using canvas (client-side only)
   const colors: string[] = [];
-  const sampleSize = Math.min(feed.length, 9); // Sample first 9 images
-
-  // Dynamic import for node-vibrant to work with Next.js
-  const Vibrant = (await import("node-vibrant")).default;
+  const sampleSize = Math.min(feed.length, 9);
 
   for (let i = 0; i < sampleSize; i++) {
     try {
-      const palette = await Vibrant.from(feed[i].url).getPalette();
-      if (palette.Vibrant?.hex) colors.push(palette.Vibrant.hex);
-      if (palette.Muted?.hex) colors.push(palette.Muted.hex);
+      const extractedColors = await extractDominantColors(feed[i].url);
+      colors.push(...extractedColors);
     } catch {
       // Skip images that fail to load
     }
@@ -202,4 +199,80 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
         b: parseInt(result[3], 16),
       }
     : null;
+}
+
+/**
+ * Extract dominant colors from image using canvas
+ * Client-side only - returns promise
+ */
+async function extractDominantColors(imageUrl: string): Promise<string[]> {
+  return new Promise((resolve) => {
+    // Skip if not in browser
+    if (typeof window === "undefined") {
+      resolve([]);
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve([]);
+          return;
+        }
+
+        // Scale down for performance
+        const size = 50;
+        canvas.width = size;
+        canvas.height = size;
+        ctx.drawImage(img, 0, 0, size, size);
+
+        const imageData = ctx.getImageData(0, 0, size, size);
+        const data = imageData.data;
+
+        // Sample colors from the image
+        const colorMap: Record<string, number> = {};
+
+        for (let i = 0; i < data.length; i += 4) {
+          const r = Math.round(data[i] / 32) * 32;
+          const g = Math.round(data[i + 1] / 32) * 32;
+          const b = Math.round(data[i + 2] / 32) * 32;
+
+          // Skip very dark or very light colors
+          const brightness = (r + g + b) / 3;
+          if (brightness < 30 || brightness > 225) continue;
+
+          const hex = rgbToHex(r, g, b);
+          colorMap[hex] = (colorMap[hex] || 0) + 1;
+        }
+
+        // Get top 2 most common colors
+        const sortedColors = Object.entries(colorMap)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 2)
+          .map(([color]) => color);
+
+        resolve(sortedColors);
+      } catch {
+        resolve([]);
+      }
+    };
+
+    img.onerror = () => resolve([]);
+    img.src = imageUrl;
+  });
+}
+
+/**
+ * Convert RGB to hex
+ */
+function rgbToHex(r: number, g: number, b: number): string {
+  return "#" + [r, g, b].map(x => {
+    const hex = x.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  }).join("");
 }
