@@ -1,4 +1,3 @@
-import Vibrant from "node-vibrant";
 import type { FeedImage, FeedAnalysis } from "./types";
 
 /**
@@ -18,6 +17,9 @@ export async function analyzeFeed(feed: FeedImage[]): Promise<FeedAnalysis> {
   // Extract colors from all images
   const colors: string[] = [];
   const sampleSize = Math.min(feed.length, 9); // Sample first 9 images
+
+  // Dynamic import for node-vibrant to work with Next.js
+  const Vibrant = (await import("node-vibrant")).default;
 
   for (let i = 0; i < sampleSize; i++) {
     try {
