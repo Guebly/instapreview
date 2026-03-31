@@ -185,8 +185,8 @@ export default function Home() {
     setHighlights(confirmTemplate.template.highlights);
     setFeed(confirmTemplate.template.feed);
     setActiveTab("profile");
-    addToast("success", `Template "${template.name}" carregado!`, "Personalize agora com suas próprias informações.");
-  }, [addToast]);
+    addToast("success", `Template "${confirmTemplate.template.name}" carregado!`, "Personalize agora com suas próprias informações.");
+  }, [confirmTemplate, addToast]);
 
   /* ── Keyboard shortcuts ── */
   useEffect(() => {
